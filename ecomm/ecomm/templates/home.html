@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <!-- Start Banner Hero -->
+    <div id="template-mo-zay-hero-carousel" class="carousel slide" data-bs-ride="carousel">
+        <ol class="carousel-indicators">
+            <li data-bs-target="#template-mo-zay-hero-carousel" data-bs-slide-to="0" class="active"></li>
+            <li data-bs-target="#template-mo-zay-hero-carousel" data-bs-slide-to="1"></li>
+            <li data-bs-target="#template-mo-zay-hero-carousel" data-bs-slide-to="2"></li>
+        </ol>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="container">
+                    <div class="row p-5">
+                        <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
+                            <img class="img-fluid" src="{% static '/img/banner_img_01.png' %}" alt="">
+                        </div>
+                        <div class="col-lg-6 mb-0 d-flex align-items-center">
+                            <div class="text-align-left align-self-center">
+                                <h1 class="h1 text-success"><b>Triokarya</b> eCommerce</h1>
+                                <p>
+                                    Tempat tinta berkualitas tinggi bertemu dengan kemudahan berbelanja!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="container">
+                    <div class="row p-5">
+                        <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
+                            <img class="img-fluid" src="{% static '/img/banner_img_02.png' %}" alt="">
+                        </div>
+                        <div class="col-lg-6 mb-0 d-flex align-items-center">
+                            <div class="text-align-left">
+                                <h1 class="h1">Tinta HP Original untuk Kualitas Terbaik!
+                                </h1>
+                                <!-- <h3 class="h2">Aliquip ex ea commodo consequat</h3> -->
+                                <p>
+                                    Temukan performa cetak luar biasa dengan tinta HP asli. Hasil tajam dan tahan lama untuk semua kebutuhan pencetakan Anda. Dapatkan sekarang di Toko Tinta Triokarya!!!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="container">
+                    <div class="row p-5">
+                        <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
+                            <img class="img-fluid" src="{% static '/img/banner_img_03.png' %}" alt="">
+                        </div>
+                        <div class="col-lg-6 mb-0 d-flex align-items-center">
+                            <div class="text-align-left">
+                                <h1 class="h1">Tinta Cetak Berkualitas Tinggi</h1>
+                                <!-- <h3 class="h2">Bright your future </h3> -->
+                                <p>
+                                    Solusi Tepat untuk Kebutuhan Printing Anda dengan berbagai tipe tinta!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a class="carousel-control-prev text-decoration-none w-auto ps-3" href="#template-mo-zay-hero-carousel"
+            role="button" data-bs-slide="prev">
+            <i class="fa fa-chevron-left"></i>
+        </a>
+        <a class="carousel-control-next text-decoration-none w-auto pe-3" href="#template-mo-zay-hero-carousel"
+            role="button" data-bs-slide="next">
+            <i class="fa fa-chevron-right"></i>
+        </a>
+    </div>
+    <!-- End Banner Hero -->
+
+    <!-- Start Categories of The Month -->
+    <section class="container py-5">
+        <div class="row text-center pt-3">
+            <div class="col-lg-6 m-auto">
+                <h1 class="h1">Categories of The Month</h1>
+                <p>
+                    Lengkapi kebutuhan Anda dengan produk-produk tinta unggulan kami, dengan hasil percetakan yang maksimal.
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-3 p-5 mt-3">
+                <a href="#"><img src="{% static '/img/category_img_01(1).jpg' %}" class="rounded-circle img-fluid border"></a>
+                <h5 class="text-center mt-3 mb-3">HP</h5>
+                <p class="text-center"><a class="btn btn-success" href="{% url 'toko:produk-list' %}?category=HP">Go Shop</a></p>
+            </div>
+            <div class="col-12 col-md-3 p-5 mt-3">
+                <a href="#"><img src="{% static '/img/category_img_02(1).jpg' %}" class="rounded-circle img-fluid border"></a>
+                <h2 class="h5 text-center mt-3 mb-3">Cannon</h2>
+                <p class="text-center"><a class="btn btn-success" href="{% url 'toko:produk-list' %}?category=Cannon">Go Shop</a></p>
+            </div>
+            <div class="col-12 col-md-3 p-5 mt-3">
+                <a href="#"><img src="{% static '/img/category_img_03(1).jpg' %}" class="rounded-circle img-fluid border"></a>
+                <h2 class="h5 text-center mt-3 mb-3">Epson</h2>
+                <p class="text-center"><a class="btn btn-success" href="{% url 'toko:produk-list' %}?category=Epson">Go Shop</a></p>
+            </div>
+            <div class="col-12 col-md-3 p-5 mt-3">
+                <a href="#"><img src="{% static '/img/category_img_04.jpg' %}" class="rounded-circle img-fluid border"></a>
+                <h5 class="text-center mt-3 mb-3">Brother</h5>
+                <p class="text-center"><a class="btn btn-success" href="{% url 'toko:produk-list' %}?category=Brother">Go Shop</a></p>
+            </div>
+        </div>
+    </section>
+    <!-- End Categories of The Month -->
+    {% endblock content %}

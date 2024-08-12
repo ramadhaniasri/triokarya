@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% load cart_template_tags %}
+{% block content%}
+
+<!--Main layout-->
+    <!-- Open Content -->
+    <section class="bg-light">
+        <div class="container pb-5">
+            <div class="row">
+                <div class="col-lg-5 mt-5">
+                    <div class="card mb-3">
+                        <img class="card-img img-fluid" src="{{ object.gambar.url }}" alt="Card image cap"
+                            id="product-detail">
+                    </div>
+                </div>
+                <!-- col end -->
+                <div class="col-lg-7 mt-5">
+                    <div class="card">
+                        <div class="card-body">
+                            <h1 class="h2">{{ object.nama_produk }}</h1>
+                            <p class="h3 py-2">
+                                {% if object.harga_diskon %}
+                                <span class="text-danger"><del>{{ object.harga|currency_idr }}</del></span>
+                                <span><b>{{ object.harga_diskon|currency_idr }}</b></span>
+                                {% else %}
+                                <span>{{ object.harga|currency_idr }}</span>
+                                {% endif %}
+                            </p>
+                            <p class="py-2">
+                                {% for _ in ''|center:5 %}
+                                    {% if forloop.counter0 < average_rating|default:"0"|add:"0" %}
+                                        <i class="fa fa-star text-warning"></i>
+                                    {% else %}
+                                        <i class="fa fa-star text-secondary"></i>
+                                    {% endif %}
+                                {% endfor %}
+                                <span class="list-inline-item text-dark">Rating {{ average_rating|default:"0" }} | {{ total_reviews }} Comments</span>
+                            </p>
+                            <ul class="list-inline">
+                                <li class="list-inline-item">
+                                    <h6>Kategori:</h6>
+                                </li>
+                                <li class="list-inline-item">
+                                    <p class="text-muted"><strong>{{ object.get_kategori_display }}</strong></p>
+                                </li>
+                            </ul>
+                            <ul class="list-inline">
+                                <li class="list-inline-item">
+                                    <h6>Berat:</h6>
+                                </li>
+                                <li class="list-inline-item">
+                                    <p class="text-muted"><strong>{{ object.berat|floatformat:0 }}g</strong></p>
+                                </li>
+                            </ul>
+
+                            <h6>Deskripsi:</h6>
+                            <p>{{ object.deskripsi }}</p>
+                            <ul class="list-inline">
+                                <li class="list-inline-item">
+                                    <h6>Label</h6>
+                                </li>
+                                {% if object.label == 'NEW' %}
+                                <li class="list-inline-item">
+                                    <p class="text-muted"><strong>New</strong></p>
+                                </li>
+                                {% elif object.label == 'SALE' %}
+                                <li class="list-inline-item">
+                                    <p class="text-muted"><strong>Sale</strong></p>
+                                </li>
+                                {% else %}
+                               <li class="list-inline-item">
+                                    <p class="text-muted"><strong>Best Seller</strong></p>
+                                </li>
+                                {% endif %}
+
+                            </ul>
+
+                            <form action="" method="GET">
+                            {% csrf_token %}
+                                <input type="hidden" name="product-title" value="Activewear">
+                                <div class="row pb-3">
+                                    <div class="col d-grid">
+                                         <a href="{{ object.get_add_to_cart_url }}" class="btn btn-success py-2">
+                                            + Tambah ke keranjang
+                                        </a>
+                                    </div>
+                                    <div class="col d-grid">
+                                         <a href="{{ object.get_remove_from_cart_url }}" class="btn btn-danger py-2">
+                                            + Hapus dari keranjang
+                                        </a>
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Close Content -->
+    <section>
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-6">
+                    {% if has_purchased %}
+                    <h4>Review Produk</h4>
+                    <form method="post" action="{% url 'toko:add_review' object.slug %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <div class="rating">
+                                <input type="radio" name="rating" id="star1" value="1">
+                                <label for="star1"><i class="fa fa-star"></i></label>
+                                <input type="radio" name="rating" id="star2" value="2">
+                                <label for="star2"><i class="fa fa-star"></i></label>
+                                <input type="radio" name="rating" id="star3" value="3">
+                                <label for="star3"><i class="fa fa-star"></i></label>
+                                <input type="radio" name="rating" id="star4" value="4">
+                                <label for="star4"><i class="fa fa-star"></i></label>
+                                <input type="radio" name="rating" id="star5" value="5">
+                                <label for="star5"><i class="fa fa-star"></i></label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="review_text">Review:</label>
+                            <textarea class="form-control" name="review_text" rows="3"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success my-4">Submit</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <h4>Reviews</h4>
+                    {% for review in reviews %}
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ review.user.username }}</h5>
+                                <p class="card-text">
+                                    {% for _ in ''|center:5 %}
+                                        {% if forloop.counter0 < review.rating|default:"0"|add:"0" %}
+                                            <i class="fa fa-star text-warning"></i>
+                                        {% else %}
+                                            <i class="fa fa-star text-secondary"></i>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                </p>
+                                <p class="card-text">{{ review.review_text }}</p>
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        {{ review.created_at|convert_to_wib }}
+                                    </small>
+                                </p>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p>Belum ada review untuk produk ini.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+<!--Main layout-->
+{% endblock content%}

@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container rounded bg-white mt-5 mb-5">
+    <a href="{% url 'toko:address_list' %}" class="btn btn-light">&larr; Back</a>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="p-3 py-5">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="text-center">{% if form.instance.pk %}Edit{% else %}Add{% endif %} Address</h4>
+                </div>
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    <div class="row">
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="labels" for="nama_penerima"><b>Penerima</b></label>
+                            <input type="text" class="form-control" id="nama_penerima" name="nama_penerima" placeholder="Penerima" required value="{{ form.nama_penerima.value|default_if_none:'' }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="labels" for="provinsi"><b>Provinsi</b></label>
+                            <select class="form-control" id="provinsi" name="provinsi" required>
+                                {% if not form.instance.pk %}
+                                    <option value="" selected disabled>Select Provinsi</option>
+                                {% endif %}
+                                {% for provinsi in provinsi_list %}
+                                    <option value="{{ provinsi.id }}" {% if form.instance.pk and provinsi.id == form.instance.provinsi.id %}selected{% endif %}>{{ provinsi.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="labels" for="kabupaten"><b>Kabupaten</b></label>
+                            <select class="form-control" id="kabupaten" name="kabupaten" required>
+                                {% if not form.instance.pk %}
+                                    <option value="" selected disabled>Select Kabupaten</option>
+                                {% endif %}
+                                {% for kabupaten in kabupaten_list %}
+                                    <option value="{{ kabupaten.id }}" {% if form.instance.pk and kabupaten.id == form.instance.kabupaten.id %}selected{% endif %}>{{ kabupaten.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="labels" for="kecamatan"><b>Kecamatan</b></label>
+                            <select class="form-control" id="kecamatan" name="kecamatan" required>
+                                {% if not form.instance.pk %}
+                                    <option value="" selected disabled>Select Kecamatan</option>
+                                {% endif %}
+                                {% for kecamatan in kecamatan_list %}
+                                    <option value="{{ kecamatan.id }}" {% if form.instance.pk and kecamatan.id == form.instance.kecamatan.id %}selected{% endif %}>{{ kecamatan.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="labels" for="kelurahan"><b>Kelurahan</b></label>
+                            <select class="form-control" id="kelurahan" name="kelurahan" required>
+                                {% if not form.instance.pk %}
+                                    <option value="" selected disabled>Select Kelurahan</option>
+                                {% endif %}
+                                {% for kelurahan in kelurahan_list %}
+                                    <option value="{{ kelurahan.id }}" {% if form.instance.pk and kelurahan.id == form.instance.kelurahan.id %}selected{% endif %}>{{ kelurahan.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="labels" for="kode_pos"><b>Kode Pos</b></label>
+                            <input type="text" class="form-control" id="kode_pos" name="kode_pos" placeholder="Kode Pos" required value="{{ form.kode_pos.value|default_if_none:'' }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="labels" for="nomor_handphone"><b>Nomor Handphone</b></label>
+                            <input type="number" class="form-control" id="nomor_handphone" name="nomor_handphone" placeholder="Nomor Handphone" required value="{{ form.nomor_handphone.value|default_if_none:'' }}">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="labels" for="detail"><b>Detail Alamat</b></label>
+                            <textarea class="form-control" id="detail" name="detail" placeholder="Detail Alamat" rows="3" required>{{ form.detail.value|default_if_none:"" }}</textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" name="is_primary" {% if form.is_primary.value %}checked{% endif %}> Is Primary
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mt-5 text-center">
+                        <button class="btn btn-success profile-button" type="submit">Save Address</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% block extra_js %}
+<script src="{% static 'js/address.js' %}"></script>
+{% endblock %}
+
+{% endblock content %}

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% load static %}
+    <div class="container mt-5">
+        <h2 class="text-center">Alamat Saya</h2>
+        <a href="{% url 'toko:address_add' %}" class="btn btn-primary mb-3">Tambah Alamat</a>
+        <table class="table">
+        <thead>
+            <tr>
+            <th>Penerima</th>
+            <th>Provinsi</th>
+            <th>Kabupaten</th>
+            <th>Kecamatan</th>
+            <th>Kelurahan</th>
+            <th>Kode pos</th>
+            <th></th>
+            <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if addresses %}
+            {% for address in addresses %}
+                <tr>
+                    <td>{{ address.nama_penerima }}</td>
+                    <td>{{ address.provinsi.name }}</td>
+                    <td>{{ address.kabupaten.name }}</td>
+                    <td>{{ address.kecamatan.name }}</td>
+                    <td>{{ address.kelurahan.name }}</td>
+                    <td>{{ address.kode_pos }}</td>
+                    <td>
+                        {% if address.is_primary %}
+                        <span class="badge bg-info text-dark">Default</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                    <form action="{% url 'toko:address_edit' address.pk %}" method="get" style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-primary">Edit</button>
+                    </form>
+                    <form action="{% url 'toko:address_delete' address.pk %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="7" class="text-center py-5 pb-5">Belum ada alamat yang ditambahkan</td>
+                </tr>
+            {% endif %}
+        </tbody>
+        </table>
+    </div>
+
+{% endblock content %}

@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load cart_template_tags %}
+{% block content %}
+<div class="container mt-5 mb-5">
+  <a href="{% url 'toko:order-history' %}" class="btn btn-light">&larr; Back</a>
+  <h2>Detail Pesanan #{{ order.id }}</h2>
+  <div class="row mt-4">
+    <div class="col-md-5">
+      <h3>Alamat Pengiriman</h3>
+      <p><b>{{ order.alamat_pengiriman.nama_penerima }}</b></p>
+      <p>{{ order.alamat_pengiriman.nomor_handphone }}</p>
+      <p>{{ order.alamat_pengiriman.kelurahan }}, {{ order.alamat_pengiriman.kecamatan }}</p>
+      <p>{{ order.alamat_pengiriman.kabupaten }}, {{ order.alamat_pengiriman.provinsi }}</p>
+      <p>{{ order.alamat_pengiriman.kode_pos }}</p>
+      <p>{{ order.alamat_pengiriman.detail_alamat }}</p>
+    </div>
+    <div class="col-md-5">
+      <h3>Metode Pembayaran</h3>
+      <p>{{ order.payment.get_payment_option_display }}</p>
+      <h3>Metode Pengiriman</h3>
+      <p>{{ order.get_delivery_method_display }} - {{ order.shipping_courier }}</p>
+      <p>Nomor Resi : {{ order.nomor_resi|default:"-" }}</b></p>
+      <p>Status Pengiriman : {{ order.get_order_status_display }}</p>
+    </div>
+    <div class="col-md-2">
+      <h5>Status Pembayaran</h5>
+      <p>
+              {% if order.payment.status == 'B' %}
+                  <span class="badge bg-warning text-white">Belum di bayar</span>
+              {% elif order.payment.status == 'S' %}
+                  <span class="badge bg-success">Pembayaran berhasil</span>
+              {% elif order.payment.status == 'F' %}
+                  <span class="badge bg-danger text-white">Pembayaran gagal</span>
+              {% endif %}
+          </p>
+      
+    </div>
+  </div>
+  <h3>Produk</h3>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Produk</th>
+        <th>Jumlah</th>
+        <th>Total Diskon</th>
+        <th>Total Harga</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in order.produk_items.all %}
+      <tr>
+        <td>{{ item.produk_item.nama_produk }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>
+        {% if item.produk_item.harga_diskon %}
+        <span class="text-danger"><del>{{ item.get_total_harga_item|currency_idr }}</del></span>
+        {% else %}
+        {{ 0|currency_idr }}
+        {% endif %}
+        </td>
+        <td>{{ item.get_total_harga_setelah_diskon|currency_idr }}</td>
+      </tr>
+      {% endfor %}
+      {% if order.shipping_cost%}
+      <tr>
+        <td colspan="3"><b>Ongkos Pengiriman</b></td>
+        <td><b>{{ order.shipping_cost|currency_idr }}</b></td>
+      </tr>
+      <tr>
+        <td colspan="3"><b>Total Pembayaran</b></td>
+        <td><b>{{ order.payment.amount|currency_idr }}</b></td>
+      </tr>
+      {% endif %}
+    </tbody>
+  </table>
+  
+  {% if order.payment.status == 'S' and order.delivery_method == 'PR'%}
+    <div class="row mt-3 mb-5">
+      <div class="col">
+        <!-- Button untuk mengubah status -->
+        {% if order.status == 'P' and request.user.is_staff %}
+        <form action="{% url 'toko:update-order-status' order.id %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-success">Dikirim</button>
+        </form>
+        {% elif order.status == 'S' %}
+        <form action="{% url 'toko:update-order-status' order.id %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-info">Pesanan Diterima</button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+
+  {% elif order.payment.status == 'S' and order.delivery_method == 'EX' %}
+  {% if order.status == 'P' and request.user.is_staff%}
+    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#input_resi_modal">Input Nomor Resi</button>
+
+    <!-- Modal for inputting nomor resi -->
+    <div class="modal fade" id="input_resi_modal" tabindex="-1" aria-labelledby="inputResiModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="inputResiModalLabel">Silahkan Input Nomor Resi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" action="{% url 'toko:order-detail' order.pk %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <input type="text" name="nomor_resi" class="form-control" placeholder="Nomor Resi...">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal for inputting nomor resi -->
+    
+    {%elif order.status == 'S'%}
+      <form action="{% url 'toko:update-order-status' order.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-info">Pesanan Diterima</button>
+      </form>
+      {%endif%} 
+  {% endif %}
+
+
+
+{% if not user.is_staff %}
+  {% if order.payment.status == 'B' and order.payment.payment_option == 'C' %}
+    <div class="mt-5 text-center">
+        <a href="https://wa.me/6285156912483?text=*[Payment%20Cash%20on%20Delivery%20(COD)]*%0A%0AHallo%2C%20saya%20{{ user.username|urlencode }}%20sudah%20melakukan%20pemesanan%20pada%20website%20Triokarya%20dengan%20pembayaran%20COD.%20Berikut%20Pesanan%20saya%3A%0A%0AID%20pesanan%3A%20{{ order.id }}%0ABarang%3A%0A{% for item in order.produk_items.all %}- {{ item.produk_item.nama_produk|urlencode }}%20(%20Jumlah%20barang%3A%20{{ item.quantity }}%20)%0A{% endfor %}%0ATotal%20harga%3A%20Rp.%20{{ order.payment.amount|currency_idr }}%0A%0ATerima%20Kasih."
+          class="btn btn-success profile-button">
+          <i class="fa fa-whatsapp"></i> Konfirmasi Pesanan
+        </a>
+    </div>
+  {% elif order.payment.status == 'B' and order.payment.payment_option == 'T' %}
+    <div class="mt-5 text-center">
+        <a href="https://wa.me/6285156912483?text=*[Payment%20Transfer]*%0A%0AHallo%2C%20saya%20{{ user.username|urlencode }}%20sudah%20melakukan%20pemesanan%20pada%20website%20Triokarya%20dengan%20pembayaran%20manual%20Transfer.%20Berikut%20Pesanan%20saya%3A%0A%0AID%20pesanan%3A%20{{ order.id }}%0ABarang%3A%0A{% for item in order.produk_items.all %}- {{ item.produk_item.nama_produk|urlencode }}%20(%20Jumlah%20barang%3A%20{{ item.quantity }}%20)%0A{% endfor %}%0ATotal%20harga%3A%20Rp.%20{{ order.payment.amount|currency_idr }}%0A%0ATerima%20Kasih."
+          class="btn btn-success profile-button">
+          <i class="fa fa-whatsapp"></i> Konfirmasi Pesanan
+        </a>
+    </div>
+  {% elif order.payment.status == 'S' %}
+      <div class="mt-5 text-center">
+      <a href="https://wa.me/6285156912483"
+        class="btn btn-success profile-button">
+          <i class="fa fa-whatsapp"></i> Hubungi Admin
+      </a>
+    </div>
+  {% endif %}
+{% endif %}
+
+
+
+</div>
+{% endblock content %}

@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load cart_template_tags %}
+{% block content %}
+<!-- Start Content -->
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-3">
+                <form action="/carousel" method="get">
+                    <ul class="list-unstyled templatemo-accordion">
+                        <li class="pb-3">
+                            <a class="collapsed d-flex justify-content-between h3 text-decoration-none" href="#">
+                                Kategori
+                                <i class="fa fa-fw fa-chevron-circle-down mt-1"></i>
+                            </a>
+                            <ul class="collapse show list-unstyled pl-3">
+                                {% for category in categories %}
+                                <li>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="category" value="{{ category }}" id="category_{{ forloop.counter }}" {% if category in selected_categories %}checked{% endif %}>
+                                        <label class="form-check-label" for="category_{{ forloop.counter }}">
+                                            {{ category }}
+                                        </label>
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    </ul>
+                    <button type="submit" class="btn btn-success py-2">Filter</button>
+                </form>
+            </div>
+
+            <div class="col-lg-9">
+                <div class="row">
+                    {% if object_list %}
+                        {% for pItem in object_list %}
+                        <div class="col-md-4">
+                        <a href="{{ pItem.get_absolute_url }}" class="text-decoration-none">
+                            <div class="card mb-4 product-wap rounded-0">
+                                <div class="card rounded-0">
+                                    <img class="card-img rounded-0 img-fluid" src="{{ pItem.gambar.url }}" style="height: 300px;">
+                                    <div class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
+                                    </div>
+                                </div>
+                                
+                                <div class="card-body">
+                                    <a href="{{ pItem.get_absolute_url }}" class="h3 text-decoration-none"><b>{{ pItem.nama_produk }}</b></a>
+                                    <ul class="w-100 list-unstyled d-flex justify-content-between mb-0">
+                                        <li>Kategori : {{ pItem.get_kategori_display }}</li>
+                                    </ul>
+
+                                    <p class=" mt-2">
+                                        {% if pItem.harga_diskon %}
+                                        <span class="text-danger"><del>{{ pItem.harga|currency_idr }}</del></span>
+                                        <span><b>{{ pItem.harga_diskon|currency_idr }}</b></span>
+                                        {% else %}
+                                        <span><b>{{ pItem.harga|currency_idr }}</b></span>
+                                        {% endif %}
+                                    </p>
+                                    <p class="py-2">
+                                        <span class="list-inline-item text-dark"> {{ pItem.average_rating|default:"0" }}</span>
+                                        {% for _ in ''|center:5 %}
+                                            {% if forloop.counter0 < pItem.average_rating|default:"0"|add:"0" %}
+                                                <i class="fa fa-star text-warning"></i>
+                                            {% else %}
+                                                <i class="fa fa-star text-secondary"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </p>
+                                </div>
+                            </div>
+                        </a>    
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="col-md-12">
+                            <div class="text-center">
+                                <img src="{% static 'img/product-notfound.png' %}" alt="Icon product not found">
+                                <p><b>Tidak ada produk ditemukan</b></p>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                <!-- Pagination -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-end">
+                                {% if object_list.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ object_list.previous_page_number }}" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                            <span class="sr-only">Previous</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                {% for num in object_list.paginator.page_range %}
+                                    {% if object_list.number == num %}
+                                        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                                    {% elif num > object_list.number|add:'-5' and num < object_list.number|add:'5' %}
+                                        <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if object_list.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ object_list.next_page_number }}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                            <span class="sr-only">Next</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Content -->
+
+    {% endblock content %}
