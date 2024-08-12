@@ -24,7 +24,7 @@ def signup(request):
         confirm_password = request.POST.get('pass2')
 
         if password != confirm_password:
-            messages.warning(request, "Konfirmasi password tidak sesuai.")
+            messages.error(request, "Konfirmasi password tidak sesuai.")
             return render(request, 'account/signup.html')
         
         # Password validation
