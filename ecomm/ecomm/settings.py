@@ -34,7 +34,7 @@ BASE_URL = env('BASE_URL')
 DEBUG = True
 
 ALLOWED_HOSTS = ['triokarya.up.railway.app']
-
+# ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -206,6 +206,7 @@ if DEBUG is False:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     # change to All
     ALLOWED_HOSTS = ['triokarya.up.railway.app']
+    # ALLOWED_HOSTS = ['*']
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
     # DATABASES = {

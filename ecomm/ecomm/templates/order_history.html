@@ -46,17 +46,19 @@
           {% if request.user.is_staff %}
           <td> 
             {% if order.payment.status == 'B' %}
-              <div class="d-flex">
-                    <form method="post" action="{% url 'toko:update_payment_status' order.id 'S' %}" class="me-2">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-success">Berhasil</button>
-                    </form>
-                    <form method="post" action="{% url 'toko:update_payment_status' order.id 'F' %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">Gagal</button>
-                    </form>
-              </div>
-            {% endif %}
+            <div class="d-flex">
+                <!-- Form untuk mengubah status pembayaran menjadi 'S' dan status pengiriman tidak berubah -->
+                <form method="post" action="{% url 'toko:update_payment_status' order.id 'S' %}" class="me-2">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success">Berhasil</button>
+                </form>
+                <!-- Form untuk mengubah status pembayaran menjadi 'F' dan status pengiriman menjadi 'G' -->
+                <form method="post" action="{% url 'toko:update_payment_status_with_shipping' order.id 'F' 'G' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Gagal</button>
+                </form>
+            </div>
+          {%endif%}
           </td>
           {% endif %}
           <td><a href="{% url 'toko:order-detail' order.pk %}" class="btn btn-light btn-small">Lihat Detail</a></td>

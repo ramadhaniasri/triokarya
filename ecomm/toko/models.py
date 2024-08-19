@@ -38,6 +38,7 @@ STATUS_CHOICES_PENGIRIMAN = (
     ('P', 'Dikemas'),
     ('S', 'Dikirim (Kurir)'),
     ('D', 'Pesanan Sampai'),
+    ('G', 'Gagal'),
 )
 
 STATUS_CHOICES_PEMBAYARAN = (

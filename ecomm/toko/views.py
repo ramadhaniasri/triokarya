@@ -580,9 +580,17 @@ class UpdateOrderStatusView(View):
         return redirect('toko:order-detail', pk=order_id) 
     
 @staff_member_required
-def update_payment_status(request, order_id, status):
+def update_payment_status(request, order_id, payment_status, shipping_status=None):
     order = get_object_or_404(Order, id=order_id)
+    
+    # Update payment status
     if order.payment:
-        order.payment.status = status
+        order.payment.status = payment_status
         order.payment.save()
+    
+    # Update shipping status only if it's provided
+    if shipping_status:
+        order.status = shipping_status
+        order.save()
+
     return redirect('toko:order-history')
